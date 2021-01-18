@@ -1,3 +1,3 @@
-exports.hello = (req, res) => {
+exports.createProduct = (req, res) => {
     res.send("HELLo")
 }
