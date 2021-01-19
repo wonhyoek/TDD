@@ -27,7 +27,7 @@ describe("Product Controller Create", () => {
     
     test("Should call productModel.create", async () => {
         await productController.createProduct(req, res, next);
-        expect(productModel.create).toBeCalledWith(newProduct);
+        expect(productModel.create).toBeCalledWith(req.body);
     });
 
     test("Should return 201 response code", async () => {
@@ -39,7 +39,7 @@ describe("Product Controller Create", () => {
     test("Should return json body in response", async () => {
         productModel.create.mockReturnValue(newProduct);
         await productController.createProduct(res, res, next);
-        expect(res._getJSONData()).toStrictEqual(newProduct);
+        expect(res._getJSONData()).toStrictEqual(req.body);
     });
 
     test("Should handle errors", async () => {
