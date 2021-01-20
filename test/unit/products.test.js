@@ -9,6 +9,7 @@ productModel.create = jest.fn();
 productModel.find = jest.fn();
 productModel.findById = jest.fn();
 productModel.findByIdAndUpdate = jest.fn();
+productModel.findByIdAndRemove = jest.fn();
 
 const productId = "6006b4525f1f0820421da21d";
 const updatedProduct = { name: "update name", description: "updated description"};
@@ -150,6 +151,41 @@ describe("Product Controller Update", () => {
         const rejectedPromise = Promise.reject(errorMessage);
         productModel.findByIdAndUpdate.mockReturnValue(rejectedPromise);
         await productController.updateProduct(req, res, next);
+        expect(next).toHaveBeenCalledWith(errorMessage);
+    })
+})
+
+describe("Product Controller Delete", () => {
+    test("should have a deleteProduct", () => {
+        expect(typeof productController.deleteProduct).toBe("function");
+    });
+    test("should call productModel.findByIdAndRemove", async () => {
+        req.params.productId = productId;
+        await productController.deleteProduct(req, res, next);
+        expect(productModel.findByIdAndRemove).toBeCalledWith(productId);
+    });
+    test("should return 200 response", async () => {
+        let deletedProduct = {
+            name: "deletedProduct",
+            description: "deletedDescription"
+        }
+        productModel.findByIdAndRemove.mockReturnValue(deletedProduct);
+        await productController.deleteProduct(req, res, next);
+        expect(res.statusCode).toBe(200);
+        expect(res._getJSONData()).toStrictEqual(deletedProduct);
+        expect(res._isEndCalled()).toBeTruthy();
+    });
+    test("should handle 404 when item doesnt exist", async () => {
+        productModel.findByIdAndRemove.mockReturnValue(null);
+        await productController.deleteProduct(req, res, next);
+        expect(res.statusCode).toBe(404);
+        expect(res._isEndCalled()).toBeTruthy();
+    });
+    test("should handle errors", async () => {
+        const errorMessage = { message: "Error deleting"};
+        const rejectedPromise = Promise.reject(errorMessage);
+        productModel.findByIdAndRemove.mockReturnValue(rejectedPromise);
+        await productController.deleteProduct(req, res, next);
         expect(next).toHaveBeenCalledWith(errorMessage);
     })
 })

@@ -39,8 +39,22 @@ exports.updateProduct = async (req, res, next) => {
         let updatedProduct = await productModel.findByIdAndUpdate(
             req.params.productId, req.body, { new: true }
         );
+        console.log(updatedProduct);
         if(updatedProduct) {
             res.status(200).json(updatedProduct);
+        } else {
+            res.status(404).send();
+        }
+    } catch (error) {
+        next(error);
+    }
+}
+
+exports.deleteProduct = async (req, res, next) => {
+    try {
+        const deletedProduct = productModel.findByIdAndRemove(req.params.productId);
+        if(deletedProduct) {
+            res.status(200).json(deletedProduct);
         } else {
             res.status(404).send();
         }
