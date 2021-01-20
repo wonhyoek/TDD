@@ -38,4 +38,9 @@ test("GET /api/product/:productId", async () => {
     expect(response.statusCode).toBe(200);
     expect(response.body.name).toBe(firstProduct.name);
     expect(response.body.description).toBe(firstProduct.description);
+});
+
+test("GET id doesnt exist /api/products/:productId", async () => {
+    const response = await request(app).get(`/api/products/6006b4525f1f0820421da345`);
+    expect(response.statusCode).toBe(404);
 })
