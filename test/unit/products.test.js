@@ -72,5 +72,12 @@ describe("Product Controller Get", () => {
         productModel.find.mockReturnValue(allProduct);
         await productController.getProducts(req, res, next);
         expect(res._getJSONData()).toStrictEqual(allProduct);
-    })
+    });
+    test("should handle errors", async () => {
+        const errorMessage = { message: "Error finding product data"};
+        const rejectedPromise = Promise.reject(errorMessage);
+        productModel.find.mockReturnValue(rejectedPromise);
+        await productController.getProducts(req, res, next);
+        expect(next).toHaveBeenCalledWith(errorMessage);
+    });
 })
